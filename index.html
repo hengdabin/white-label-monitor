@@ -3,57 +3,236 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Amazon白牌笔记本监控 - MCP远程版</title>
+<title>亚马逊白牌监控 V7</title>
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
-body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", sans-serif; background: #0f172a; color: #e2e8f0; }
-.header { background: linear-gradient(135deg, #1e293b 0%, #334155 100%); padding: 24px; text-align: center; border-bottom: 2px solid #3b82f6; }
-.header h1 { font-size: 22px; margin-bottom: 6px; }
-.header .subtitle { font-size: 13px; color: #94a3b8; }
-.header .update-time { font-size: 12px; color: #64748b; margin-top: 4px; }
-.content { padding: 16px; max-width: 1600px; margin: 0 auto; }
-.controls { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; align-items: center; }
-.country-btn { padding: 6px 14px; border: 1px solid #475569; background: #1e293b; color: #cbd5e1; border-radius: 6px; cursor: pointer; font-size: 13px; transition: all 0.2s; }
-.country-btn:hover { background: #334155; }
-.country-btn.active { background: #3b82f6; color: white; border-color: #3b82f6; }
-.cat-tab { padding: 4px 12px; border: 1px solid #475569; background: transparent; color: #94a3b8; border-radius: 4px; cursor: pointer; font-size: 12px; }
-.cat-tab.active { background: #475569; color: white; }
+body {
+    font-family: "Microsoft YaHei", "Segoe UI", Arial, sans-serif;
+    background: #1b2838;
+    color: #c7d5e0;
+    min-height: 100vh;
+}
+.header {
+    background: linear-gradient(135deg, #171a21 0%, #1b2838 100%);
+    padding: 20px 30px;
+    border-bottom: 2px solid #2a475e;
+}
+.header h1 {
+    color: #66c0f4;
+    font-size: 24px;
+    margin-bottom: 8px;
+}
+.header .subtitle {
+    color: #8f98a0;
+    font-size: 14px;
+}
+.stats-bar {
+    display: flex;
+    gap: 20px;
+    padding: 15px 30px;
+    background: #171a21;
+    border-bottom: 1px solid #2a475e;
+    flex-wrap: wrap;
+}
+.stat-item {
+    background: #2a475e;
+    border-radius: 6px;
+    padding: 10px 18px;
+    min-width: 120px;
+}
+.stat-item .label {
+    font-size: 11px;
+    color: #8f98a0;
+    text-transform: uppercase;
+}
+.stat-item .value {
+    font-size: 22px;
+    font-weight: bold;
+    color: #66c0f4;
+    margin-top: 2px;
+}
+.stat-item .value.green { color: #a4d007; }
+.stat-item .value.purple { color: #9b59b6; }
+.stat-item .value.orange { color: #e67e22; }
+
+/* 卖家来源统计 */
+.seller-stats {
+    padding: 10px 30px;
+    background: #171a21;
+    border-bottom: 1px solid #2a475e;
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+.seller-stats .title {
+    font-size: 12px;
+    color: #8f98a0;
+    margin-right: 5px;
+}
+.seller-tag {
+    background: #2a475e;
+    border-radius: 4px;
+    padding: 4px 10px;
+    font-size: 12px;
+    color: #c7d5e0;
+}
+
+/* 国家导航 */
+.country-nav {
+    display: flex;
+    gap: 8px;
+    padding: 15px 30px;
+    background: #171a21;
+    border-bottom: 1px solid #2a475e;
+    flex-wrap: wrap;
+}
+.country-btn {
+    background: #2a475e;
+    border: 1px solid #3d6b8e;
+    border-radius: 6px;
+    padding: 8px 16px;
+    color: #c7d5e0;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.2s;
+}
+.country-btn:hover {
+    background: #3d6b8e;
+    border-color: #66c0f4;
+}
+.country-btn.active {
+    background: #66c0f4;
+    color: #1b2838;
+    font-weight: bold;
+    border-color: #66c0f4;
+}
+.country-btn .badge {
+    background: #e74c3c;
+    color: white;
+    border-radius: 10px;
+    padding: 1px 6px;
+    font-size: 11px;
+    margin-left: 4px;
+}
+
+/* 品类Tab */
+.cat-tabs {
+    display: flex;
+    gap: 0;
+    padding: 0 30px;
+    background: #171a21;
+    border-bottom: 1px solid #2a475e;
+}
+.cat-tab {
+    padding: 10px 24px;
+    cursor: pointer;
+    color: #8f98a0;
+    border-bottom: 2px solid transparent;
+    font-size: 14px;
+    transition: all 0.2s;
+}
+.cat-tab:hover { color: #c7d5e0; }
+.cat-tab.active {
+    color: #66c0f4;
+    border-bottom-color: #66c0f4;
+    font-weight: bold;
+}
+
+/* 内容区 */
+.content { padding: 20px 30px; }
 .country-section { display: none; }
 .country-section.active { display: block; }
-.cat-panel { display: none; }
-.cat-panel.active { display: block; }
-.stats-bar { display: flex; gap: 16px; margin-bottom: 12px; flex-wrap: wrap; }
-.stat-item { background: #1e293b; padding: 8px 14px; border-radius: 6px; font-size: 12px; }
-.stat-item .label { color: #64748b; }
-.stat-item .value { color: #3b82f6; font-weight: bold; font-size: 16px; }
-table { width: 100%; border-collapse: collapse; font-size: 12px; }
-th { background: #1e293b; padding: 8px 6px; text-align: left; position: sticky; top: 0; color: #94a3b8; font-weight: 500; border-bottom: 2px solid #334155; white-space: nowrap; }
-td { padding: 6px; border-bottom: 1px solid #1e293b; vertical-align: top; }
-tr:hover { background: #1e293b; }
-.rank { text-align: center; color: #64748b; width: 36px; }
-.asin { font-family: monospace; font-size: 11px; white-space: nowrap; }
-.asin a { color: #60a5fa; text-decoration: none; }
-.asin a:hover { text-decoration: underline; }
-.brand { font-weight: 500; white-space: nowrap; max-width: 120px; overflow: hidden; text-overflow: ellipsis; }
-.config { font-size: 11px; color: #94a3b8; white-space: nowrap; max-width: 200px; overflow: hidden; text-overflow: ellipsis; }
-.title-cell { max-width: 250px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 11px; color: #cbd5e1; }
-.price { white-space: nowrap; font-weight: 500; color: #fbbf24; }
-.rating { color: #fbbf24; white-space: nowrap; }
-.reviews { color: #94a3b8; text-align: right; white-space: nowrap; }
-.sales { white-space: nowrap; color: #34d399; }
-.date { font-size: 11px; color: #64748b; white-space: nowrap; }
-.seller { font-size: 11px; white-space: nowrap; }
+
+/* 表格 */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #2a475e;
+    border-radius: 8px;
+    overflow: hidden;
+    margin-top: 10px;
+}
+thead {
+    background: #1b2838;
+}
+th {
+    padding: 10px 12px;
+    text-align: left;
+    font-size: 12px;
+    color: #66c0f4;
+    text-transform: uppercase;
+    border-bottom: 2px solid #3d6b8e;
+    white-space: nowrap;
+}
+td {
+    padding: 8px 12px;
+    font-size: 13px;
+    border-bottom: 1px solid #1b2838;
+    max-width: 300px;
+}
+tr:hover td {
+    background: #3d6b8e33;
+}
+td.asin a {
+    color: #66c0f4;
+    text-decoration: none;
+    font-family: monospace;
+    font-size: 12px;
+}
+td.asin a:hover {
+    text-decoration: underline;
+}
+td.brand { color: #e74c3c; font-weight: bold; font-size: 12px; }
+td.config { color: #82b1ff; font-size: 11px; white-space: nowrap; }
+td.price { color: #a4d007; font-weight: bold; white-space: nowrap; }
+td.rank { color: #9b59b6; font-weight: bold; text-align: center; }
+td.rating { color: #f39c12; }
+td.reviews { text-align: right; }
+td.sales { color: #66c0f4; text-align: right; }
+td.date { color: #8f98a0; font-size: 12px; white-space: nowrap; }
+td.seller { font-size: 12px; white-space: nowrap; }
+td.title-cell { 
+    max-width: 350px; 
+    overflow: hidden; 
+    text-overflow: ellipsis; 
+    white-space: nowrap; 
+    color: #c7d5e0;
+    font-size: 12px;
+}
+.no-data {
+    text-align: center;
+    padding: 40px;
+    color: #8f98a0;
+    font-size: 16px;
+}
+
+/* 变化指示 */
+.change-hint { font-size: 11px; color: #8f98a0; }
+.change-hint .change-up { color: #a4d007; }
+.change-hint .change-down { color: #e74c3c; }
+.change-hint .change-same { color: #8f98a0; }
+.change-hint .change-new { color: #66c0f4; font-weight: bold; }
+
+/* 独立变化类(V7表格内直接使用) */
+.change-new { color: #66c0f4; font-weight: bold; }
+.change-up { color: #a4d007; }
+.change-down { color: #e74c3c; }
 .remark { font-size: 11px; white-space: nowrap; }
-.change-new { color: #22d3ee; font-weight: bold; }
-.change-up { color: #f87171; }
-.change-down { color: #34d399; }
+
+/* 响应式 */
+@media (max-width: 768px) {
+    .stats-bar, .country-nav, .seller-stats { padding: 10px 15px; }
+    .content { padding: 15px; }
+    td.title-cell { max-width: 200px; }
+}
 </style>
 </head>
 <body>
 <div class="header">
-<h1>🏷️ Amazon白牌笔记本监控</h1>
-<div class="subtitle">MCP远程采集 | 13国 | Top 100 | 白牌率统计</div>
-<div class="update-time">更新时间: 2026-07-26 03:33:39</div>
+<h1>🏷️ 亚马逊白牌监控 V7</h1>
+<div class="subtitle">Top 100 白牌监控 | 13国 | 白牌率统计</div>
+<div class="update-time">更新时间: 2026-07-26 12:23:58</div>
 </div>
 <div class="content">
 <div class="controls">
